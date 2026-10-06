@@ -3,7 +3,7 @@
   // === 1. KAMUS LINK ADSTERRA ===
   const adDictionary = {
     7670004: "https://uplcm.com/4/10676324",
-    7320130: "https://xcsho.blogspot.com",
+    7320130: "https://uplcm.com/4/11655692",
     10676324: "https://s.shopee.co.id/gQ5rPBmeh",
     10456445: "https://s.shopee.co.id/2BEte8AjM9",
     7320133: "https://xcsho.blogspot.com"
