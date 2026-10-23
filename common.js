@@ -2,11 +2,11 @@
 (() => {
   // === 1. KAMUS LINK ADSTERRA ===
   const adDictionary = {
-    7670004: "https://uplcm.com/4/10676324",
-    7320130: "https://uplcm.com/4/11655692",
-    10676324: "https://s.shopee.co.id/gQ5rPBmeh",
-    10456445: "https://s.shopee.co.id/2BEte8AjM9",
-    7320133: "https://xcsho.blogspot.com"
+    7670004: "https://dozenfourteen.com/xzrwqmf12?key=baa00e57ed87e9b8d15f8dd1804bd5d8",
+    7320130: "https://dozenfourteen.com/pqak5kvbm?key=e1ef166c6c175c472c360c3307b1548c",
+    10676324: "https://dozenfourteen.com/q3sc09250?key=a70c53ec64dade158b084af93e2acf60",
+    10456445: "https://dozenfourteen.com/yscgwvbitp?key=04b330b325b14ed542037aa9c15ccdf8",
+    7320133: "https://dozenfourteen.com/q3sc09250?key=a70c53ec64dade158b084af93e2acf60"
   };
 
   const getLink = (id) => (id && adDictionary[id]) ? adDictionary[id] : null;
